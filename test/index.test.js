@@ -14,6 +14,8 @@ describe('ImmutableObjectHistory', function () {
   let list1, list2, list3;
   let atEmpty, at0, at1, at2, at3, atMinus1;
 
+  let userSetLast, userGetLast;
+
   before(async function () {
     userV1 = { id: 1, name: 'Name', age: 24 };
     userV2 = { age: 25, genre: 'male' };
@@ -37,6 +39,9 @@ describe('ImmutableObjectHistory', function () {
     at2 = await at(key)(2);
     at3 = await at(key)(3);
     atMinus1 = await at(key)(-1);
+
+    userSetLast = await set(key, { lastKey: 'lastValue' });
+    userGetLast = await get(key);
   });
 
   describe('set', function () {
@@ -118,6 +123,9 @@ describe('ImmutableObjectHistory', function () {
           genre: 'male',
         });
       });
+      it('"at" funtion with -1 argument is equal with "at" function without arguments', () => {
+        assert.deepEqual(atMinus1, atEmpty);
+      });
     });
   });
 
@@ -177,15 +185,50 @@ describe('ImmutableObjectHistory', function () {
       });
       it("should return an object with keys 'timestamp', 'item', 'date', 'index'", () => {
         assert.equal(
-          ['timestamp', 'item', 'date', 'index'].every((key) =>
-            Object.keys(atMinus1).includes(key)
-          ),
+          ['timestamp', 'item', 'date', 'index'].every((key) => Object.keys(atMinus1).includes(key)),
           true
         );
       });
       it('should return an object with 4 keys', () => {
         assert.equal(Object.keys(atMinus1).length, 4);
       });
+    });
+  });
+
+  describe('Last set equal last get', function () {
+    it('should return undefined', () => {
+      assert.deepEqual(userSetLast, userGetLast);
+    });
+  });
+
+  describe('Immutability', function () {
+    it('list is immutable and push shourd return an error', () => {
+      try {
+        list3.push({ newKey: 'newValue' });
+      } catch (error) {
+        assert(error instanceof Error);
+      }
+    });
+    it('set return object is immutable', () => {
+      try {
+        userState3['newKey'] = 'newValue';
+      } catch (error) {
+        assert(error instanceof Error);
+      }
+    });
+    it('get return object is immutable', () => {
+      try {
+        getuserState3.newKey = 'newValue';
+      } catch (error) {
+        assert(error instanceof Error);
+      }
+    });
+    it('at return object is immutable', () => {
+      try {
+        atMinus1['newKey'] = 'newValue';
+      } catch (error) {
+        assert(error instanceof Error);
+      }
     });
   });
 });
