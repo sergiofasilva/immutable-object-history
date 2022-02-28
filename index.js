@@ -2,29 +2,16 @@
 const ImmutableObjectHistory = (cache = new Map()) => {
   this.cache = this.cache || cache;
   const get = async (key) => {
-    let history = await this.cache.get(key);
-    try {
-      history = JSON.parse(history) || [];
-    } catch (error) {
-      history = [];
-    }
-    const lastItem = getByIndex(history)();
-
+    const lastItem = await at(key)(-1);
     return Object.freeze({ ...lastItem.item });
   };
   const set = (key, item) => {
     const setItem = async (item) => {
-      let history = await this.cache.get(key);
-
-      try {
-        history = JSON.parse(history) || [];
-      } catch (error) {
-        history = [];
-      }
-      const lastItem = getByIndex(history)();
+      const history = [...(await list(key))];
+      const lastItem = history.length ? history.at(-1).item : {};
 
       const newItem = {
-        ...lastItem.item,
+        ...lastItem,
         ...item,
       };
       const newValue = {
@@ -53,7 +40,7 @@ const ImmutableObjectHistory = (cache = new Map()) => {
       history = [];
     }
 
-    return Object.freeze(history);
+    return Object.freeze([...history]);
   };
 
   const at = (key) => {
@@ -66,12 +53,11 @@ const ImmutableObjectHistory = (cache = new Map()) => {
       }
 
       const itemByIndex = getByIndex(history)(index);
-      return Object.freeze(itemByIndex);
+      return itemByIndex && Object.freeze({ ...itemByIndex });
     };
   };
   const getByIndex = (history) => {
-    return (index = -1) =>
-      history.length ? Object.freeze(history.at(index)) : Object.freeze({});
+    return (index = -1) => (history.length ? Object.freeze(history.at(index)) : Object.freeze({}));
   };
 
   return {
