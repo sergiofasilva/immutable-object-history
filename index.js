@@ -9,15 +9,18 @@ const ImmutableObjectHistory = (cache = new Map()) => {
     const setItem = async (item) => {
       const history = [...(await list(key))];
       const lastItem = history.length ? history.at(-1).item : {};
+      const currentTimestamp = Date.now();
+      const currentDate = new Date(currentTimestamp).toISOString();
 
       const newItem = {
         ...lastItem,
         ...item,
       };
+
       const newValue = {
         item: newItem,
-        timestamp: Date.now(),
-        date: new Date().toISOString(),
+        timestamp: currentTimestamp,
+        date: currentDate,
         index: history.length,
       };
 
@@ -57,7 +60,8 @@ const ImmutableObjectHistory = (cache = new Map()) => {
     };
   };
   const getByIndex = (history) => {
-    return (index = -1) => (history.length ? Object.freeze(history.at(index)) : Object.freeze({}));
+    return (index = -1) =>
+      history.length ? Object.freeze(history.at(index)) : Object.freeze({});
   };
 
   return {
