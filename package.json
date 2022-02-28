@@ -1,0 +1,27 @@
+{
+  "name": "immutable-object-history",
+  "version": "1.0.0",
+  "description": "Immutable objects with state history.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergiofasilva/immutable-object-history.git"
+  },
+  "keywords": [
+    "immutable",
+    "state",
+    "history"
+  ],
+  "author": "Sérgio Silva <sergiofasilva@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sergiofasilva/immutable-object-history/issues"
+  },
+  "homepage": "https://github.com/sergiofasilva/immutable-object-history#readme",
+  "devDependencies": {
+    "mocha": "^9.2.1"
+  }
+}
