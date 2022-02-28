@@ -1,6 +1,6 @@
 {
   "name": "immutable-object-history",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Immutable objects with state history.",
   "main": "index.js",
   "scripts": {
