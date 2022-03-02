@@ -1,6 +1,10 @@
 'use strict';
-const ImmutableObjectHistory = (cache = new Map()) => {
-  this.cache = this.cache || cache;
+let cacheClient;
+const ImmutableObjectHistory = function (
+  cache = { get: (key = '') => cache.get(key), set: (key, value) => cache.set(key, value) }
+) {
+  cacheClient = !cacheClient ? (arguments.length === 0 ? new Map() : cache) : cacheClient;
+
   const get = async (key) => {
     const lastItem = await at(key)(-1);
     return Object.freeze({ ...lastItem.item });
@@ -25,7 +29,7 @@ const ImmutableObjectHistory = (cache = new Map()) => {
       };
 
       history.push(newValue);
-      await this.cache.set(key, JSON.stringify(history));
+      await cacheClient.set(key, JSON.stringify(history));
 
       return Object.freeze(newItem);
     };
@@ -36,7 +40,7 @@ const ImmutableObjectHistory = (cache = new Map()) => {
     return setItem;
   };
   const list = async (key) => {
-    let history = await this.cache.get(key);
+    let history = await cacheClient.get(key);
     try {
       history = JSON.parse(history) || [];
     } catch (error) {
@@ -48,7 +52,7 @@ const ImmutableObjectHistory = (cache = new Map()) => {
 
   const at = (key) => {
     return async (index = -1) => {
-      let history = await this.cache.get(key);
+      let history = await cacheClient.get(key);
       try {
         history = JSON.parse(history) || [];
       } catch (error) {
@@ -60,8 +64,7 @@ const ImmutableObjectHistory = (cache = new Map()) => {
     };
   };
   const getByIndex = (history) => {
-    return (index = -1) =>
-      history.length ? Object.freeze(history.at(index)) : Object.freeze({});
+    return (index = -1) => (history.length ? Object.freeze(history.at(index)) : Object.freeze({}));
   };
 
   return {
