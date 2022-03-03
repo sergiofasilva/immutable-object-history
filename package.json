@@ -3,6 +3,7 @@
   "version": "1.0.3",
   "description": "Immutable objects with state history.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "mocha"
   },

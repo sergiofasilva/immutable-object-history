@@ -12,7 +12,7 @@ npm install immutable-object-history --save
 
 ```javascript
 'use strict';
-const ImmutableObjectHistory = require('immutable-object-history');
+import ImmutableObjectHistory from 'immutable-object-history';
 const { get, set, list, at } = ImmutableObjectHistory();
 /*
 ImmutableObjectHistory accepts as an argument an object with the functions:
@@ -79,7 +79,7 @@ Prints:
 
 ```javascript
 'use strict';
-const ImmutableObjectHistory = require('immutable-object-history');
+import ImmutableObjectHistory from 'immutable-object-history';
 const { get, set, list, at } = ImmutableObjectHistory();
 /*
 ImmutableObjectHistory accepts as an argument an object with the functions:

@@ -1,8 +1,8 @@
 'use strict';
-const ImmutableObjectHistory = require('../index');
+import ImmutableObjectHistory from '../index.mjs';
 const { get, set, list, at } = ImmutableObjectHistory();
 
-const assert = require('assert/strict');
+import assert, { deepEqual, equal } from 'assert/strict';
 
 describe('ImmutableObjectHistory', function () {
   let key;
@@ -47,12 +47,12 @@ describe('ImmutableObjectHistory', function () {
   describe('set', function () {
     describe('set state 1', function () {
       it("should return { id: 1, name: 'Name', age: 24 }", () => {
-        assert.deepEqual(userState1, { id: 1, name: 'Name', age: 24 });
+        deepEqual(userState1, { id: 1, name: 'Name', age: 24 });
       });
     });
     describe('set state 2', function () {
       it("should return { id: 1, name: 'Name', age: 25, genre: 'male' }", () => {
-        assert.deepEqual(userState2, {
+        deepEqual(userState2, {
           id: 1,
           name: 'Name',
           age: 25,
@@ -62,7 +62,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('set state 3', function () {
       it("should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        assert.deepEqual(userState3, {
+        deepEqual(userState3, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -75,7 +75,7 @@ describe('ImmutableObjectHistory', function () {
   describe('get', function () {
     describe('get state 1', function () {
       it("should return { id: 1, name: 'Name', age: 24 }", () => {
-        assert.deepEqual(getuserState1, {
+        deepEqual(getuserState1, {
           id: 1,
           name: 'Name',
           age: 24,
@@ -84,7 +84,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('get state 3', function () {
       it("should return { id: 1, name: 'Name', age: 25, genre: 'male' }", () => {
-        assert.deepEqual(getuserState2, {
+        deepEqual(getuserState2, {
           id: 1,
           name: 'Name',
           age: 25,
@@ -94,7 +94,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('get state 3', function () {
       it("should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        assert.deepEqual(getuserState3, {
+        deepEqual(getuserState3, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -107,16 +107,16 @@ describe('ImmutableObjectHistory', function () {
   describe('list', function () {
     describe('list length', function () {
       it('list1 should have length 1', () => {
-        assert.deepEqual(list1.length, 1);
+        deepEqual(list1.length, 1);
       });
       it('list2 should have length 2', () => {
-        assert.deepEqual(list2.length, 2);
+        deepEqual(list2.length, 2);
       });
       it('list3 should have length 3', () => {
-        assert.deepEqual(list3.length, 3);
+        deepEqual(list3.length, 3);
       });
       it("list3 last item should be equal to { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        assert.deepEqual(list3[list3.length - 1].item, {
+        deepEqual(list3[list3.length - 1].item, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -124,7 +124,7 @@ describe('ImmutableObjectHistory', function () {
         });
       });
       it('"at" funtion with -1 argument is equal with "at" function without arguments', () => {
-        assert.deepEqual(atMinus1, atEmpty);
+        deepEqual(atMinus1, atEmpty);
       });
     });
   });
@@ -132,7 +132,7 @@ describe('ImmutableObjectHistory', function () {
   describe('at', function () {
     describe('at empty', function () {
       it("item should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        assert.deepEqual(atEmpty.item, {
+        deepEqual(atEmpty.item, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -142,7 +142,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('at 0', function () {
       it("item should return { id: 1, name: 'Name', age: 24 }", () => {
-        assert.deepEqual(at0.item, {
+        deepEqual(at0.item, {
           id: 1,
           name: 'Name',
           age: 24,
@@ -151,7 +151,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('at 1', function () {
       it("item should return { id: 1, name: 'Name', age: 25, genre: 'male' }", () => {
-        assert.deepEqual(at1.item, {
+        deepEqual(at1.item, {
           id: 1,
           name: 'Name',
           age: 25,
@@ -161,7 +161,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('at 2', function () {
       it("item should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        assert.deepEqual(at2.item, {
+        deepEqual(at2.item, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -171,12 +171,12 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('at 3', function () {
       it('should return undefined', () => {
-        assert.deepEqual(at3, undefined);
+        deepEqual(at3, undefined);
       });
     });
     describe('at -1', function () {
       it("item should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        assert.deepEqual(atMinus1.item, {
+        deepEqual(atMinus1.item, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -184,20 +184,20 @@ describe('ImmutableObjectHistory', function () {
         });
       });
       it("should return an object with keys 'timestamp', 'item', 'date', 'index'", () => {
-        assert.equal(
+        equal(
           ['timestamp', 'item', 'date', 'index'].every((key) => Object.keys(atMinus1).includes(key)),
           true
         );
       });
       it('should return an object with 4 keys', () => {
-        assert.equal(Object.keys(atMinus1).length, 4);
+        equal(Object.keys(atMinus1).length, 4);
       });
     });
   });
 
   describe('Last set equal last get', function () {
     it('should return undefined', () => {
-      assert.deepEqual(userSetLast, userGetLast);
+      deepEqual(userSetLast, userGetLast);
     });
   });
 
