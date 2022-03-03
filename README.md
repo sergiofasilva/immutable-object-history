@@ -14,6 +14,11 @@ npm install immutable-object-history --save
 'use strict';
 const ImmutableObjectHistory = require('immutable-object-history');
 const { get, set, list, at } = ImmutableObjectHistory();
+/*
+ImmutableObjectHistory accepts as an argument an object with the functions:
+    - get(key)
+    - set(key, object)
+*/
 
 const userV1 = { id: 1, name: 'Name', age: 24 };
 const key = `user:${id}`;
