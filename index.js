@@ -1,7 +1,7 @@
 'use strict';
 let cacheClient;
 const ImmutableObjectHistory = function (
-  cache = { get: (key = '') => cache.get(key), set: (key, value) => cache.set(key, value) }
+  cache = { get: (key = '') => cache.get(key), set: (key = '', value = {}) => cache.set(key, value) }
 ) {
   cacheClient = !cacheClient ? (arguments.length === 0 ? new Map() : cache) : cacheClient;
 
