@@ -1,9 +1,16 @@
 'use strict';
 let cacheClient;
 const ImmutableObjectHistory = function (
-  cache = { get: (key = '') => cache.get(key), set: (key = '', value = {}) => cache.set(key, value) }
+  cache = {
+    get: (key = '') => cache.get(key),
+    set: (key = '', value = {}) => cache.set(key, value),
+  }
 ) {
-  cacheClient = !cacheClient ? (arguments.length === 0 ? new Map() : cache) : cacheClient;
+  cacheClient = !cacheClient
+    ? arguments.length === 0
+      ? new Map()
+      : cache
+    : cacheClient;
 
   const get = async (key) => {
     const lastItem = await at(key)(-1);
@@ -64,7 +71,8 @@ const ImmutableObjectHistory = function (
     };
   };
   const getByIndex = (history) => {
-    return (index = -1) => (history.length ? Object.freeze(history.at(index)) : Object.freeze({}));
+    return (index = -1) =>
+      history.length ? Object.freeze(history.at(index)) : Object.freeze({});
   };
 
   return {
