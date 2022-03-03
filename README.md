@@ -18,6 +18,10 @@ const { get, set, list, at } = ImmutableObjectHistory();
 ImmutableObjectHistory accepts as an argument an object with the functions:
     - get(key)
     - set(key, object)
+
+Samples: Map object, redis client, ...
+
+if empty, by default, ImmutableObjectHistory usage Map object.
 */
 
 const userV1 = { id: 1, name: 'Name', age: 24 };
