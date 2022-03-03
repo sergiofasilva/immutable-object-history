@@ -27,8 +27,8 @@ if empty, by default, ImmutableObjectHistory usage Map object.
 const userV1 = { id: 1, name: 'Name', age: 24 };
 const key = `user:${id}`;
 const setUserV1 = set(key, userV1);
-//setUserV1 = { id: 1, name: 'Name', age: 24 };
+console.log(setUserV1); // { id: 1, name: 'Name', age: 24 };
 const userV2 = { age: 25, genre: 'male' };
 const setUserV2 = set(key, userV2);
-//setUserV2 = { id: 1, name: 'Name', age: 25, genre: 'male' };
+console.log(setUserV2); // { id: 1, name: 'Name', age: 25, genre: 'male' };
 ```
