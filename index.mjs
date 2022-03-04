@@ -78,4 +78,4 @@ const ImmutableObjectHistory = function (
   };
 };
 
-export default ImmutableObjectHistory;
+export { ImmutableObjectHistory as default };
