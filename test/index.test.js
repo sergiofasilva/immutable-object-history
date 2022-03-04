@@ -202,7 +202,7 @@ describe('ImmutableObjectHistory', function () {
   });
 
   describe('Immutability', function () {
-    it('list is immutable and push shourd return an error', () => {
+    it('list is immutable and push should return an error', () => {
       try {
         list3.push({ newKey: 'newValue' });
       } catch (error) {
