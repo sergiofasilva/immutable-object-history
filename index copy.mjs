@@ -1,11 +1,17 @@
 'use strict';
-
+// let cacheClient;
 const ImmutableObjectHistory = function (
   cache = {
     get: (key = '') => cache.get(key),
     set: (key = '', value = {}) => cache.set(key, value),
   }
 ) {
+  // cacheClient = !cacheClient
+  //   ? arguments.length === 0
+  //     ? new Map()
+  //     : cache
+  //   : cacheClient;
+
   const cacheClient = cache;
 
   if (!cacheClient || arguments.length === 0) {
@@ -22,18 +28,24 @@ const ImmutableObjectHistory = function (
   }
 
   const get = async (key) => {
-    const values = await list(key);
-    const lastValue = merge(values);
-    return Object.freeze({ ...lastValue });
+    const lastItem = await at(key)(-1);
+    return Object.freeze({ ...lastItem.item });
   };
-  const set = (key, value) => {
-    const setValue = async (value) => {
+  const set = (key, item) => {
+    const setItem = async (item) => {
       const history = [...(await list(key))];
+      const lastItem = history.length ? history.at(-1).item : {};
       const currentTimestamp = Date.now();
       const currentDate = new Date(currentTimestamp).toISOString();
 
+      const newItem = {
+        ...lastItem,
+        ...item,
+      };
+
       const newValue = {
-        value: value,
+        item: newItem,
+        changes: history.length ? item : {},
         timestamp: currentTimestamp,
         date: currentDate,
         index: history.length,
@@ -42,37 +54,18 @@ const ImmutableObjectHistory = function (
       history.push(newValue);
       await cacheClient.set(key, JSON.stringify(history));
 
-      return Object.freeze(await get(key));
+      return Object.freeze(newItem);
     };
 
-    if (value) {
-      return setValue(value);
+    if (item) {
+      return setItem(item);
     }
-    return setValue;
+    return setItem;
   };
   const list = async (key) => {
-    let history;
+    let history = await cacheClient.get(key);
     try {
-      history = await cacheClient.get(key);
       history = JSON.parse(history) || [];
-    } catch (error) {
-      history = [];
-    }
-
-    return Object.freeze([...history]);
-  };
-
-  const listAll = async (key) => {
-    let history;
-    try {
-      const historyList = await list(key);
-      history = historyList.map((el, idx) => {
-        el.item =
-          idx === 0
-            ? { ...el.value }
-            : { ...historyList[idx - 1].item, ...el.value };
-        return el;
-      });
     } catch (error) {
       history = [];
     }
@@ -82,31 +75,20 @@ const ImmutableObjectHistory = function (
 
   const at = (key) => {
     return async (index = -1) => {
-      let history;
+      let history = await cacheClient.get(key);
       try {
-        history = await cacheClient.get(key);
         history = JSON.parse(history) || [];
       } catch (error) {
         history = [];
       }
-      if (index < -1 || index >= history.length) {
-        return undefined;
-      }
 
-      index = index === -1 ? history.length - 1 : index;
-      const historyToIndex = history.slice(0, index + 1);
-      const value = merge(historyToIndex);
-      const item = historyToIndex.pop();
-      item.item = value;
-      return Object.freeze({ ...item });
+      const itemByIndex = getByIndex(history)(index);
+      return itemByIndex && Object.freeze({ ...itemByIndex });
     };
   };
-
-  const merge = (list = []) => {
-    const merged = list.reduce((previous, current) => {
-      return { ...previous, ...current.value };
-    }, {});
-    return Object.freeze({ ...merged });
+  const getByIndex = (history) => {
+    return (index = -1) =>
+      history.length ? Object.freeze(history.at(index)) : Object.freeze({});
   };
 
   return {
@@ -114,7 +96,6 @@ const ImmutableObjectHistory = function (
     set,
     at,
     list,
-    listAll,
   };
 };
 

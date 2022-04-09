@@ -1,8 +1,12 @@
 'use strict';
-import ImmutableObjectHistory from '../index.mjs';
-const { get, set, list, at } = ImmutableObjectHistory();
+// const ImmutableObjectHistory = require('../index');
+import { ImmutableObjectHistory } from '../index.mjs';
+const redis = await import('./local/redis.cjs');
+const mRedis = redis.default;
+const { get, set, list, listAll, at } = ImmutableObjectHistory(new Map());
 
-import assert, { deepEqual, equal } from 'assert/strict';
+// const assert = require('assert/strict');
+import { strict as assert } from 'assert';
 
 describe('ImmutableObjectHistory', function () {
   let key;
@@ -12,7 +16,8 @@ describe('ImmutableObjectHistory', function () {
   let userState1, userState2, userState3;
   let getuserState1, getuserState2, getuserState3;
   let list1, list2, list3;
-  let atEmpty, at0, at1, at2, at3, atMinus1;
+  let listAll1, listAll2, listAll3;
+  let atEmpty, at0, at1, at2, at3, at4, atMinus1, atMinus2;
 
   let userSetLast, userGetLast;
 
@@ -21,24 +26,30 @@ describe('ImmutableObjectHistory', function () {
     userV2 = { age: 25, genre: 'male' };
     userV3 = { age: 26 };
     key = `user:${userV1.id}`;
+    await mRedis.del('user:1');
     userState1 = await set(key, userV1);
     getuserState1 = await get(key);
     list1 = await list(key);
+    listAll1 = await listAll(key);
 
     userState2 = await set(key)(userV2);
     getuserState2 = await get(key);
     list2 = await list(key);
+    listAll2 = await listAll(key);
 
     userState3 = await set(key, userV3);
     getuserState3 = await get(key);
     list3 = await list(key);
+    listAll3 = await listAll(key);
 
     atEmpty = await at(key)();
     at0 = await at(key)(0);
     at1 = await at(key)(1);
     at2 = await at(key)(2);
     at3 = await at(key)(3);
+    at4 = await at(key)(4);
     atMinus1 = await at(key)(-1);
+    atMinus2 = await at(key)(-2);
 
     userSetLast = await set(key, { lastKey: 'lastValue' });
     userGetLast = await get(key);
@@ -47,12 +58,12 @@ describe('ImmutableObjectHistory', function () {
   describe('set', function () {
     describe('set state 1', function () {
       it("should return { id: 1, name: 'Name', age: 24 }", () => {
-        deepEqual(userState1, { id: 1, name: 'Name', age: 24 });
+        assert.deepEqual(userState1, { id: 1, name: 'Name', age: 24 });
       });
     });
     describe('set state 2', function () {
       it("should return { id: 1, name: 'Name', age: 25, genre: 'male' }", () => {
-        deepEqual(userState2, {
+        assert.deepEqual(userState2, {
           id: 1,
           name: 'Name',
           age: 25,
@@ -62,7 +73,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('set state 3', function () {
       it("should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        deepEqual(userState3, {
+        assert.deepEqual(userState3, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -75,7 +86,7 @@ describe('ImmutableObjectHistory', function () {
   describe('get', function () {
     describe('get state 1', function () {
       it("should return { id: 1, name: 'Name', age: 24 }", () => {
-        deepEqual(getuserState1, {
+        assert.deepEqual(getuserState1, {
           id: 1,
           name: 'Name',
           age: 24,
@@ -84,7 +95,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('get state 3', function () {
       it("should return { id: 1, name: 'Name', age: 25, genre: 'male' }", () => {
-        deepEqual(getuserState2, {
+        assert.deepEqual(getuserState2, {
           id: 1,
           name: 'Name',
           age: 25,
@@ -94,7 +105,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('get state 3', function () {
       it("should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        deepEqual(getuserState3, {
+        assert.deepEqual(getuserState3, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -107,24 +118,89 @@ describe('ImmutableObjectHistory', function () {
   describe('list', function () {
     describe('list length', function () {
       it('list1 should have length 1', () => {
-        deepEqual(list1.length, 1);
+        assert.deepEqual(list1.length, 1);
       });
       it('list2 should have length 2', () => {
-        deepEqual(list2.length, 2);
+        assert.deepEqual(list2.length, 2);
       });
       it('list3 should have length 3', () => {
-        deepEqual(list3.length, 3);
+        assert.deepEqual(list3.length, 3);
       });
       it("list3 last item should be equal to { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        deepEqual(list3[list3.length - 1].item, {
+        assert.deepEqual(list3[list3.length - 1].value, {
+          age: 26,
+        });
+      });
+      it('"at" funtion with -1 argument is equal with "at" function without arguments', () => {
+        assert.deepEqual(atMinus1, atEmpty);
+      });
+    });
+  });
+
+  describe('listAll', function () {
+    describe('list length', function () {
+      it('listAll1 should have length 1', () => {
+        assert.deepEqual(listAll1.length, 1);
+      });
+      it('listAll2 should have length 2', () => {
+        assert.deepEqual(listAll2.length, 2);
+      });
+      it('listAll3 should have length 3', () => {
+        assert.deepEqual(listAll3.length, 3);
+      });
+    });
+    describe('listAll item', function () {
+      it("Last listAll1 item should return { id: 1, name: 'Name', age: 24 }", () => {
+        assert.deepEqual(listAll1[listAll1.length - 1].item, {
+          id: 1,
+          name: 'Name',
+          age: 24,
+        });
+      });
+      it("Last listAll3 item should return { id: 1, name: 'Name', age: 25, genre: 'male' }", () => {
+        assert.deepEqual(listAll2[listAll2.length - 1].item, {
+          id: 1,
+          name: 'Name',
+          age: 25,
+          genre: 'male',
+        });
+      });
+      it("Last listAll3 item should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
+        assert.deepEqual(listAll3[listAll3.length - 1].item, {
           id: 1,
           name: 'Name',
           age: 26,
           genre: 'male',
         });
       });
-      it('"at" funtion with -1 argument is equal with "at" function without arguments', () => {
-        deepEqual(atMinus1, atEmpty);
+      it('First listAll3 element value property should return {id: 1, age: 24, name: "Name" }', () => {
+        assert.deepEqual(listAll3[0].value, {
+          id: 1,
+          age: 24,
+          name: 'Name',
+        });
+      });
+      it('Second listAll3 element value property should return { age: 26, gender: "male" }', () => {
+        assert.deepEqual(listAll3[1].value, {
+          age: 25,
+          genre: 'male',
+        });
+      });
+      it('Third listAll3 element value property should return { age: 26 }', () => {
+        assert.deepEqual(listAll3[2].value, {
+          age: 26,
+        });
+      });
+      it("listAll element should return an object with keys 'timestamp', 'item', 'value', 'date', 'index'", () => {
+        assert.equal(
+          ['timestamp', 'item', , 'value', 'date', 'index'].every((key) =>
+            Object.keys(listAll3[listAll3.length - 1]).includes(key)
+          ),
+          true
+        );
+      });
+      it('listAll element should return an object with 5 keys', () => {
+        assert.equal(Object.keys(listAll3[listAll3.length - 1]).length, 5);
       });
     });
   });
@@ -132,7 +208,7 @@ describe('ImmutableObjectHistory', function () {
   describe('at', function () {
     describe('at empty', function () {
       it("item should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        deepEqual(atEmpty.item, {
+        assert.deepEqual(atEmpty.item, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -142,7 +218,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('at 0', function () {
       it("item should return { id: 1, name: 'Name', age: 24 }", () => {
-        deepEqual(at0.item, {
+        assert.deepEqual(at0.item, {
           id: 1,
           name: 'Name',
           age: 24,
@@ -151,7 +227,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('at 1', function () {
       it("item should return { id: 1, name: 'Name', age: 25, genre: 'male' }", () => {
-        deepEqual(at1.item, {
+        assert.deepEqual(at1.item, {
           id: 1,
           name: 'Name',
           age: 25,
@@ -161,7 +237,7 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('at 2', function () {
       it("item should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        deepEqual(at2.item, {
+        assert.deepEqual(at2.item, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -171,12 +247,22 @@ describe('ImmutableObjectHistory', function () {
     });
     describe('at 3', function () {
       it('should return undefined', () => {
-        deepEqual(at3, undefined);
+        assert.deepEqual(at3, undefined);
+      });
+    });
+    describe('at 4', function () {
+      it('should return undefined', () => {
+        assert.deepEqual(at4, undefined);
+      });
+    });
+    describe('at -2', function () {
+      it('should return undefined', () => {
+        assert.deepEqual(atMinus2, undefined);
       });
     });
     describe('at -1', function () {
       it("item should return { id: 1, name: 'Name', age: 26, genre: 'male' }", () => {
-        deepEqual(atMinus1.item, {
+        assert.deepEqual(atMinus1.item, {
           id: 1,
           name: 'Name',
           age: 26,
@@ -184,20 +270,22 @@ describe('ImmutableObjectHistory', function () {
         });
       });
       it("should return an object with keys 'timestamp', 'item', 'date', 'index'", () => {
-        equal(
-          ['timestamp', 'item', 'date', 'index'].every((key) => Object.keys(atMinus1).includes(key)),
+        assert.equal(
+          ['timestamp', 'item', 'date', 'index'].every((key) =>
+            Object.keys(atMinus1).includes(key)
+          ),
           true
         );
       });
-      it('should return an object with 4 keys', () => {
-        equal(Object.keys(atMinus1).length, 4);
+      it('should return an object with 5 keys', () => {
+        assert.equal(Object.keys(atMinus1).length, 5);
       });
     });
   });
 
   describe('Last set equal last get', function () {
     it('should return undefined', () => {
-      deepEqual(userSetLast, userGetLast);
+      assert.deepEqual(userSetLast, userGetLast);
     });
   });
 

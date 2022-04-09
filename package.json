@@ -2,7 +2,7 @@
   "name": "immutable-object-history",
   "version": "1.0.3",
   "description": "Immutable objects with state history.",
-  "main": "index.js",
+  "main": "index.mjs",
   "type": "module",
   "scripts": {
     "test": "mocha"
