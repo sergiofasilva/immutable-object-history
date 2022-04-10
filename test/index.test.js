@@ -1,12 +1,9 @@
 'use strict';
-// const ImmutableObjectHistory = require('../index');
-import { ImmutableObjectHistory } from '../index.mjs';
-const redis = await import('./local/redis.cjs');
-const mRedis = redis.default;
-const { get, set, list, listAll, at } = ImmutableObjectHistory(new Map());
+const ImmutableObjectHistory = require('../index');
+const mRedis = require('./local/redis.cjs');
+const assert = require('assert/strict');
 
-// const assert = require('assert/strict');
-import { strict as assert } from 'assert';
+const { get, set, list, listAll, at } = ImmutableObjectHistory(new Map());
 
 describe('ImmutableObjectHistory', function () {
   let key;

@@ -118,4 +118,4 @@ const ImmutableObjectHistory = function (
   };
 };
 
-export { ImmutableObjectHistory };
+module.exports = ImmutableObjectHistory;
