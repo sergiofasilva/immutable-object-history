@@ -294,6 +294,13 @@ describe('ImmutableObjectHistory', function () {
         assert(error instanceof Error);
       }
     });
+    it('listAll is immutable and push should return an error', () => {
+      try {
+        listAll3.push({ newKey: 'newValue' });
+      } catch (error) {
+        assert(error instanceof Error);
+      }
+    });
     it('set return object is immutable', () => {
       try {
         userState3['newKey'] = 'newValue';
