@@ -26,6 +26,7 @@ const ImmutableObjectHistory = function (
     const lastValue = merge(values);
     return Object.freeze(lastValue);
   };
+
   const set = (key, value) => {
     const setValue = async (value) => {
       const history = [...(await list(key))];
@@ -50,6 +51,7 @@ const ImmutableObjectHistory = function (
     }
     return setValue;
   };
+
   const list = async (key) => {
     let history;
     try {
