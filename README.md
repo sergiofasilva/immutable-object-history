@@ -42,7 +42,7 @@ Prints:
 { id: 1, name: 'Name', age: 25, genre: 'male' };
 */
 
-const userAllStatesList = list(key);
+const userAllStatesList = listAll(key);
 console.log(userAllStatesList);
 /*
 Prints:
@@ -50,14 +50,16 @@ Prints:
     {
         index: 0
         timestamp: 1646346849318,
-        date: 2022-03-03T22:34:09.318Z
-        item: { id: 1, name: 'Name', age: 24 }
+        date: 2022-03-03T22:34:09.318Z,
+        item: { id: 1, name: 'Name', age: 24 },
+        value: { id: 1, name: 'Name', age: 24 }
     },
     {
         index: 1
         timestamp: 1646346857792,
-        date: 2022-03-03T22:34:17.792Z
-        item: { id: 1, name: 'Name', age: 25, genre: 'male' }
+        date: 2022-03-03T22:34:17.792Z,
+        item: { id: 1, name: 'Name', age: 25, genre: 'male' },
+        value: { age: 25, genre: 'male' }
     }
 ]
 */
@@ -69,8 +71,9 @@ Prints:
 {
     index: 1
     timestamp: 1646346857792,
-    date: 2022-03-03T22:34:17.792Z
-    item: { id: 1, name: 'Name', age: 25, genre: 'male' }
+    date: 2022-03-03T22:34:17.792Z,
+    item: { id: 1, name: 'Name', age: 25, genre: 'male' },
+    value: { age: 25, genre: 'male' }
 }
 */
 ```
