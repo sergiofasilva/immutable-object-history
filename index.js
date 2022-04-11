@@ -24,7 +24,7 @@ const ImmutableObjectHistory = function (
   const get = async (key) => {
     const values = await list(key);
     const lastValue = merge(values);
-    return Object.freeze({ ...lastValue });
+    return Object.freeze(lastValue);
   };
   const set = (key, value) => {
     const setValue = async (value) => {
@@ -59,7 +59,7 @@ const ImmutableObjectHistory = function (
       history = [];
     }
 
-    return Object.freeze([...history]);
+    return Object.freeze(history);
   };
 
   const listAll = async (key) => {
@@ -77,7 +77,7 @@ const ImmutableObjectHistory = function (
       history = [];
     }
 
-    return Object.freeze([...history]);
+    return Object.freeze(history);
   };
 
   const at = (key) => {
@@ -98,7 +98,7 @@ const ImmutableObjectHistory = function (
       const value = merge(historyToIndex);
       const item = historyToIndex.pop();
       item.item = value;
-      return Object.freeze({ ...item });
+      return Object.freeze(item);
     };
   };
 
@@ -106,7 +106,7 @@ const ImmutableObjectHistory = function (
     const merged = list.reduce((previous, current) => {
       return { ...previous, ...current.value };
     }, {});
-    return Object.freeze({ ...merged });
+    return Object.freeze(merged);
   };
 
   return {
