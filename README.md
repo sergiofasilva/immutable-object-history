@@ -13,7 +13,7 @@ npm install immutable-object-history --save
 ```javascript
 'use strict';
 import ImmutableObjectHistory from 'immutable-object-history';
-const { get, set, list, at } = ImmutableObjectHistory();
+const { get, set, list, listAll, at } = ImmutableObjectHistory();
 /*
 ImmutableObjectHistory accepts as an argument an object with the functions:
     - get(key)
@@ -42,8 +42,28 @@ Prints:
 { id: 1, name: 'Name', age: 25, genre: 'male' };
 */
 
-const userAllStatesList = listAll(key);
+const userAllStatesList = list(key);
 console.log(userAllStatesList);
+/*
+Prints:
+[
+    {
+        index: 0
+        timestamp: 1646346849318,
+        date: 2022-03-03T22:34:09.318Z,
+        value: { id: 1, name: 'Name', age: 24 }
+    },
+    {
+        index: 1
+        timestamp: 1646346857792,
+        date: 2022-03-03T22:34:17.792Z,
+        value: { age: 25, genre: 'male' }
+    }
+]
+*/
+
+const userAllStatesListAll = listAll(key);
+console.log(userAllStatesListAll);
 /*
 Prints:
 [
