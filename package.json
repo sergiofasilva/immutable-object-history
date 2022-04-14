@@ -13,7 +13,13 @@
   "keywords": [
     "immutable",
     "state",
-    "history"
+    "history",
+    "audit",
+    "logging",
+    "data",
+    "trace",
+    "time",
+    "list"
   ],
   "author": "Sérgio Silva <sergiofasilva@gmail.com>",
   "license": "ISC",
