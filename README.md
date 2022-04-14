@@ -103,7 +103,7 @@ Prints:
 ```javascript
 'use strict';
 import ImmutableObjectHistory from 'immutable-object-history';
-const { get, set, list, at } = ImmutableObjectHistory();
+const { get, set, list, listAll, at } = ImmutableObjectHistory();
 /*
 ImmutableObjectHistory accepts as an argument an object with the functions:
     - get(key)
