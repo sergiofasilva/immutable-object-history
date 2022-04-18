@@ -1,6 +1,5 @@
 'use strict';
 const ImmutableObjectHistory = require('../index');
-const mRedis = require('./local/redis.cjs');
 const assert = require('assert/strict');
 
 const { get, set, list, listAll, at } = ImmutableObjectHistory(new Map());
@@ -23,7 +22,6 @@ describe('ImmutableObjectHistory', function () {
     userV2 = { age: 25, genre: 'male' };
     userV3 = { age: 26 };
     key = `user:${userV1.id}`;
-    await mRedis.del('user:1');
     userState1 = await set(key, userV1);
     getuserState1 = await get(key);
     list1 = await list(key);
@@ -268,9 +266,7 @@ describe('ImmutableObjectHistory', function () {
       });
       it("should return an object with keys 'timestamp', 'item', 'date', 'index'", () => {
         assert.equal(
-          ['timestamp', 'item', 'date', 'index'].every((key) =>
-            Object.keys(atMinus1).includes(key)
-          ),
+          ['timestamp', 'item', 'date', 'index'].every((key) => Object.keys(atMinus1).includes(key)),
           true
         );
       });
